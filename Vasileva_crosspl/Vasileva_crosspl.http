@@ -1,0 +1,6 @@
+@Vasileva_crosspl_HostAddress = http://localhost:5157
+
+GET {{Vasileva_crosspl_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
