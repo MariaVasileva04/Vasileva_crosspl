@@ -1,0 +1,71 @@
+{
+	"info": {
+		"_postman_id": "a1b2c3d4-e5f6-7890-g1h2-i3j4k5l6m7n8",
+		"name": "TO_Trub_API_Tests",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "1. Login Admin",
+			"request": {
+				"method": "POST",
+				"header": [ { "key": "Content-Type", "value": "application/json" } ],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"login\": \"admin\",\n  \"password\": \"admin123\"\n}"
+				},
+				"url": { "raw": "http://localhost:5000/api/auth/login", "protocol": "http", "host": ["localhost"], "port": "5000", "path": ["api", "auth", "login"] }
+			}
+		},
+		{
+			"name": "2. Login User",
+			"request": {
+				"method": "POST",
+				"header": [ { "key": "Content-Type", "value": "application/json" } ],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"login\": \"user\",\n  \"password\": \"user123\"\n}"
+				},
+				"url": { "raw": "http://localhost:5000/api/auth/login", "protocol": "http", "host": ["localhost"], "port": "5000", "path": ["api", "auth", "login"] }
+			}
+		},
+		{
+			"name": "3. Get Reports (Без токена) -> Ожидаем 401",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": { "raw": "http://localhost:5000/api/reports/urgent-repairs", "protocol": "http", "host": ["localhost"], "port": "5000", "path": ["api", "reports", "urgent-repairs"] }
+			}
+		},
+		{
+			"name": "4. Create Pipeline с токеном User -> Ожидаем 403",
+			"request": {
+				"method": "POST",
+				"header": [
+					{ "key": "Content-Type", "value": "application/json" },
+					{ "key": "Authorization", "value": "Bearer ВСТАВЬ_СЮДА_ТОКЕН_ИЗ_ЗАПРОСА_2" }
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"name\": \"Магистраль №1\",\n  \"diameter\": 1200,\n  \"length\": 50,\n  \"material\": \"Сталь\",\n  \"installDate\": \"2020-01-15T00:00:00\"\n}"
+				},
+				"url": { "raw": "http://localhost:5000/api/pipelines", "protocol": "http", "host": ["localhost"], "port": "5000", "path": ["api", "pipelines"] }
+			}
+		},
+		{
+			"name": "5. Create Pipeline с токеном Admin -> Ожидаем 201",
+			"request": {
+				"method": "POST",
+				"header": [
+					{ "key": "Content-Type", "value": "application/json" },
+					{ "key": "Authorization", "value": "Bearer ВСТАВЬ_СЮДА_ТОКЕН_ИЗ_ЗАПРОСА_1" }
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"name\": \"Магистраль №2\",\n  \"diameter\": 800,\n  \"length\": 30,\n  \"material\": \"Полиэтилен\",\n  \"installDate\": \"2022-01-01T00:00:00\"\n}"
+				},
+				"url": { "raw": "http://localhost:5000/api/pipelines", "protocol": "http", "host": ["localhost"], "port": "5000", "path": ["api", "pipelines"] }
+			}
+		}
+	]
+}
