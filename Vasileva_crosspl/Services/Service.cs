@@ -162,19 +162,21 @@ namespace Vasileva_crosspl.Services
 
         public List<object> GetAllRecordsDetails()
         {
-            var result = _context.MaintenanceRecords
+            var records = _context.MaintenanceRecords
                 .Include(r => r.Pipeline)
                 .Include(r => r.Contractor)
-                .Select(r => new
-                {
-                    RecordId = r.Id,
-                    Pipeline = r.Pipeline!.Name,
-                    Contractor = r.Contractor!.CompanyName,
-                    Date = r.Date,
-                    ActualCost = r.ActualCost,
-                    EstimatedCost = r.Contractor!.CalcCost(r.Pipeline),
-                    Notes = r.Notes
-                }).ToList();
+                .ToList(); 
+
+            var result = records.Select(r => new
+            {
+                RecordId = r.Id,
+                Pipeline = r.Pipeline!.Name,
+                Contractor = r.Contractor!.CompanyName,
+                Date = r.Date,
+                ActualCost = r.ActualCost,
+                EstimatedCost = r.Contractor!.CalcCost(r.Pipeline), 
+                Notes = r.Notes
+            }).ToList();
 
             return result.Cast<object>().ToList();
         }
