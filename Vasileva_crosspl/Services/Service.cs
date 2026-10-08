@@ -141,6 +141,7 @@ namespace Vasileva_crosspl.Services
                         .Select(c => c.CompanyName)
                         .FirstOrDefault()
                 }).ToList();
+        }
 
         public List<ContractorCostDto> GetContractorCosts()
         {
