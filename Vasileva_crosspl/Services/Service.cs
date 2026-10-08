@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Vasileva_crosspl.Models;
+using Vasileva_crosspl.Dtos;
 
 namespace Vasileva_crosspl.Services
 {
@@ -124,13 +125,13 @@ namespace Vasileva_crosspl.Services
         }
 
 
-        public List<dynamic> GetUrgentRepairs()
+        public List<UrgentRepairDto> GetUrgentRepairs()
         {
             var allPipelines = _context.Pipelines.ToList();
 
-            var result = allPipelines
+            return allPipelines
                 .Where(p => p.RequiresUrgentMaintenance())
-                .Select(p => (dynamic)new
+                .Select(p => new UrgentRepairDto
                 {
                     PipelineName = p.Name,
                     Wear = p.CalculateWearPercentage(),
@@ -141,44 +142,37 @@ namespace Vasileva_crosspl.Services
                         .FirstOrDefault()
                 }).ToList();
 
-            return result;
-        }
-
-        public List<object> GetContractorCosts()
+        public List<ContractorCostDto> GetContractorCosts()
         {
-            var result = _context.MaintenanceRecords
+            return _context.MaintenanceRecords
                 .Include(r => r.Contractor)
                 .GroupBy(r => r.ContractorId)
-                .Select(g => new
+                .Select(g => new ContractorCostDto
                 {
                     ContractorId = g.Key,
                     ContractorName = g.First().Contractor!.CompanyName,
                     TotalSpent = g.Sum(r => r.ActualCost),
                     RecordsCount = g.Count()
                 }).ToList();
-
-            return result.Cast<object>().ToList();
         }
 
-        public List<object> GetAllRecordsDetails()
+        public List<RecordDetailsDto> GetAllRecordsDetails()
         {
             var records = _context.MaintenanceRecords
                 .Include(r => r.Pipeline)
                 .Include(r => r.Contractor)
-                .ToList(); 
+                .ToList();
 
-            var result = records.Select(r => new
+            return records.Select(r => new RecordDetailsDto
             {
                 RecordId = r.Id,
                 Pipeline = r.Pipeline!.Name,
                 Contractor = r.Contractor!.CompanyName,
                 Date = r.Date,
                 ActualCost = r.ActualCost,
-                EstimatedCost = r.Contractor!.CalcCost(r.Pipeline), 
+                EstimatedCost = r.Contractor!.CalcCost(r.Pipeline),
                 Notes = r.Notes
             }).ToList();
-
-            return result.Cast<object>().ToList();
         }
 
         public List<object> GetMaintenanceSchedule()

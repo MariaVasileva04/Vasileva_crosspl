@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Vasileva_crosspl.Models;
 using Vasileva_crosspl.Services;
+using Vasileva_crosspl.Dtos;
 
 var builder = WebApplication.CreateBuilder(args);
 

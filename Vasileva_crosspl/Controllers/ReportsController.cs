@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Vasileva_crosspl.Services;
+using Vasileva_crosspl.Dtos; 
 
 namespace Vasileva_crosspl.Controllers
 {
@@ -17,21 +18,21 @@ namespace Vasileva_crosspl.Controllers
         }
 
         [HttpGet("urgent-repairs")]
-        public IActionResult GetUrgentRepairs()
+        public ActionResult<List<UrgentRepairDto>> GetUrgentRepairs()
         {
             var result = _service.GetUrgentRepairs();
             return Ok(result);
         }
 
         [HttpGet("contractor-costs")]
-        public IActionResult GetContractorCosts()
+        public ActionResult<List<ContractorCostDto>> GetContractorCosts()
         {
             var result = _service.GetContractorCosts();
             return Ok(result);
         }
 
         [HttpGet("all-records-details")]
-        public IActionResult GetAllRecordsDetails()
+        public ActionResult<List<RecordDetailsDto>> GetAllRecordsDetails()
         {
             var result = _service.GetAllRecordsDetails();
             return Ok(result);
