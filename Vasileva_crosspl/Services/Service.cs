@@ -124,13 +124,13 @@ namespace Vasileva_crosspl.Services
         }
 
 
-        public List<object> GetUrgentRepairs()
+        public List<dynamic> GetUrgentRepairs()
         {
             var allPipelines = _context.Pipelines.ToList();
 
             var result = allPipelines
                 .Where(p => p.RequiresUrgentMaintenance())
-                .Select(p => new
+                .Select(p => (dynamic)new
                 {
                     PipelineName = p.Name,
                     Wear = p.CalculateWearPercentage(),
@@ -141,7 +141,7 @@ namespace Vasileva_crosspl.Services
                         .FirstOrDefault()
                 }).ToList();
 
-            return result.Cast<object>().ToList();
+            return result;
         }
 
         public List<object> GetContractorCosts()
