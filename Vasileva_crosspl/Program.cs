@@ -31,7 +31,23 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 builder.Services.AddControllers();
 builder.Services.AddScoped<Service>();
 
+
+// Разрешаем запросы с фронтенда (Angular по умолчанию работает на порту 4200)
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAngular", policy =>
+    {
+        policy.WithOrigins("http://localhost:4200")
+              .AllowAnyHeader()
+              .AllowAnyMethod()
+              .AllowCredentials(); // Обязательно для JWT токенов!
+    });
+});
+
 var app = builder.Build();
+
+// Включаем эту политику сразу после builder.Build()
+app.UseCors("AllowAngular");
 
 using(var scope = app.Services.CreateScope())
 {

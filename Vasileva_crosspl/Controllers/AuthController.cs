@@ -13,24 +13,42 @@ namespace Vasileva_crosspl.Controllers
         [HttpPost("login")]
         public IActionResult Login([FromBody] LoginRequest request)
         {
-            var user = new User { Login = request.Login };
+            string adminpas = "admin123";
+            string usepas = "user123";
 
-            user.Password = request.Password;
+            string adminhash = ComputeMd5(adminpas);
+            string usehash = ComputeMd5(usepas);
 
-            bool isValid = (request.Login == "admin" && request.Password == "admin123") ||
-                           (request.Login == "user" && request.Password == "user123");
+            bool isValid = false;
+            if (request.Login == "admin" && request.Password == adminhash)
+                isValid = true;
+            else if (request.Login == "user" && request.Password == usehash)
+                isValid = true;
 
             if (!isValid)
                 return Unauthorized(new { message = "Неверный логин или пароль" });
 
+            var user = new User { Login = request.Login};
             var token = AuthOptions.GenerateToken(user.IsAdmin);
             return Ok(token);
 
         }
+        private string ComputeMd5(string input)
+        {
+            using (var md5 = System.Security.Cryptography.MD5.Create())
+            {
+                var inputBytes = System.Text.Encoding.ASCII.GetBytes(input);
+                var hashBytes = md5.ComputeHash(inputBytes);
+                return Convert.ToHexString(hashBytes).ToLowerInvariant();
+            }
+        }
+
+
     }
     public class LoginRequest
     {
         public string Login { get; set; }
         public string Password { get; set; }
     }
-}
+
+    }

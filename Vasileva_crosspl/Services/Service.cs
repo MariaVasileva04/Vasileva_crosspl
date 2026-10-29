@@ -127,31 +127,46 @@ namespace Vasileva_crosspl.Services
 
         public List<UrgentRepairDto> GetUrgentRepairs()
         {
-            var allPipelines = _context.Pipelines.ToList();
+            try
+            {
+                var allPipelines = _context.Pipelines.ToList();
+                var recommendedContractor = _context.Contractors
+                    .Where(c => c.Rating >= 4)
+                    .OrderBy(c => c.BasePricePerKm)
+                    .Select(c => c.CompanyName)
+                    .FirstOrDefault() ?? "Не назначен";
 
-            return allPipelines
-                .Where(p => p.RequiresUrgentMaintenance())
-                .Select(p => new UrgentRepairDto
-                {
-                    PipelineName = p.Name,
-                    Wear = p.CalculateWearPercentage(),
-                    RecommendedContractor = _context.Contractors
-                        .Where(c => c.Rating >= 4)
-                        .OrderBy(c => c.BasePricePerKm)
-                        .Select(c => c.CompanyName)
-                        .FirstOrDefault()
-                }).ToList();
+                return allPipelines
+                    .Where(p => p.RequiresUrgentMaintenance())
+                    .Select(p => new UrgentRepairDto
+                    {
+                        PipelineName = p.Name,
+                        Wear = p.CalculateWearPercentage(),
+                        RecommendedContractor = recommendedContractor
+                    }).ToList();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Ошибка: {ex.Message}");
+                return new List<UrgentRepairDto>();
+            }
         }
 
         public List<ContractorCostDto> GetContractorCosts()
         {
-            return _context.MaintenanceRecords
+            
+            var records = _context.MaintenanceRecords
                 .Include(r => r.Contractor)
+                .ToList();
+
+             
+            
+            return records
                 .GroupBy(r => r.ContractorId)
                 .Select(g => new ContractorCostDto
                 {
                     ContractorId = g.Key,
-                    ContractorName = g.First().Contractor!.CompanyName,
+                    ContractorName = g.First().Contractor?.CompanyName ?? "Неизвестный подрядчик",
                     TotalSpent = g.Sum(r => r.ActualCost),
                     RecordsCount = g.Count()
                 }).ToList();
